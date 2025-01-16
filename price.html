@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Price Predictor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #3a4e6e;
+            font-family: 'Poppins', sans-serif;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 70px auto;
+            padding: 25px;
+            background: #1e2a3e;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+            color: #E0E6F8;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #a9c8f4;
+        }
+
+        .form-control {
+            border: 2px solid #476a8e;
+            background: #2a3d5a;
+            color: #dcefff;
+            font-size: 1.2rem;
+            padding: 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #69a3ff;
+            background: #314c70;
+            box-shadow: 0 0 10px rgba(0, 162, 255, 0.7);
+        }
+
+        .btn-primary {
+            background: #007bff;
+            border: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: #fff;
+            width: 100%;
+            transition: background 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            color: #fff;
+            box-shadow: 0 8px 15px rgba(0, 91, 187, 0.7);
+        }
+
+        .alert {
+            font-size: 1.3rem;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .alert-success {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .link-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .link-container a {
+            display: inline-block;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #007bff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            background-color: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .link-container a:hover {
+            background-color: #007bff;
+            color: #ffffff;
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.6);
+        }
+
+        .redirect-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .redirect-container a {
+            display: inline-block;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 25px;
+            background-color: #1e3a8a;
+            /* Dark Blue */
+            border-radius: 10px;
+            border: 2px solid #1e3a8a;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(30, 58, 138, 0.3);
+            /* Subtle shadow */
+        }
+
+        .redirect-container a:hover {
+            background-color: #3b82f6;
+            /* Lighter Blue */
+            border-color: #3b82f6;
+            color: #ffffff;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.6);
+            /* Glow effect */
+            transform: translateY(-2px);
+            /* Lifted effect */
+        }
+
+        .form-control::placeholder {
+            color: #ffffff;
+            opacity: 0.7;
+            /* Ensures the placeholder color is fully opaque */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2 class="title">Crop Price Predictor</h2>
+        <form method="POST" action="/price">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="Area" class="form-label">Area</label>
+                    <input type="text" name="Area" id="Area" class="form-control"
+                        value="{{ session['Area'] if session.get('Area') else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="Item" class="form-label">Crop Item</label>
+                    <input type="text" name="Item" id="Item" class="form-control"
+                        value="{{ session['Item'] if session.get('Item') else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="Year" class="form-label">Year</label>
+                    <input type="number" name="Year" id="Year" class="form-control"
+                        value="{{ session['Year'] if session.get('Year') else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="average_rain_fall_mm_per_year" class="form-label">Average Rainfall (mm/year)</label>
+                    <input type="number" step="0.01" name="average_rain_fall_mm_per_year"
+                        id="average_rain_fall_mm_per_year" class="form-control"
+                        value="{{ session['average_rain_fall_mm_per_year'] if session.get('average_rain_fall_mm_per_year') else '' }}"
+                        placeholder="Enter Rainfall" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="pesticides_tonnes" class="form-label">Pesticides Used (tonnes)</label>
+                    <input type="number" step="0.01" name="pesticides_tonnes" id="pesticides_tonnes"
+                        class="form-control"
+                        value="{{ session['pesticides_tonnes'] if session.get('pesticides_tonnes') else '' }}"
+                        placeholder="Enter Pesticides Usage" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="avg_temp" class="form-label">Average Temperature (°C)</label>
+                    <input type="number" step="0.01" name="avg_temp" id="avg_temp" class="form-control"
+                        value="{{ session['avg_temp'] if session.get('avg_temp') else '' }}"
+                        placeholder="Enter Average Temperature" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="crop_yield" class="form-label">Predicted Crop Yield</label>
+                    <input type="number" step="0.01" name="crop_yield" id="crop_yield" class="form-control"
+                        value="{{ session['predicted_value'] if session.get('predicted_value') else '' }}"
+                        placeholder="Predicted Yield" required>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">Predict Price</button>
+            </div>
+            {% if price_prediction %}
+            <div class="mt-4 alert alert-success text-center">
+                Predicted Crop Price: <strong>{{ price_prediction }}</strong>
+            </div>
+            {% endif %}
+            {% if error %}
+            <div class="mt-4 alert alert-danger text-center">
+                <strong>{{ error }}</strong>
+            </div>
+            {% endif %}
+
+            <div class="redirect-container">
+            <a href="/" class="btn btn-secondary">Go to Yield Prediction</a>
+        </div>
+
+
+
+
+
+
+
+        </form>
+
+
+
+        <div class="card bg-dark text-white border-0 mt-5 p-4">
+    <div class="card-body">
+        <!-- Bulk Prediction -->
+        <h2 class="text-center mb-4" style="color: #d1e3ff;">Bulk Prediction of Price</h2>
+        <form action="/bulk_predict" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="value" value="price">
+            <div class="mb-3">
+                <label for="file" class="form-label">Upload CSV File</label>
+                <input type="file" class="form-control" name="file"  required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3 w-100">Upload and Predict</button>
+        </form>
+    </div>
+</div>
+
+<div class="card bg-dark text-white border-0 mt-5 p-4">
+    <div class="card-body">
+        <!-- Heatmaps -->
+        <h2 class="text-center mb-4" style="color: #d1e3ff;">Generate Heatmap</h2>
+        <form action="/heatmaps" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="value" value="price">
+            <div class="mb-3">
+                <label for="file" class="form-label">Upload CSV File</label>
+                <input type="file" class="form-control" name="file" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3 w-100">Generate Heatmap</button>
+        </form>
+    </div>
+</div>
+
+    </div>
+</body>
+
+</html>
